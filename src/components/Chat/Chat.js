@@ -8,10 +8,16 @@ let socket;
 
 //it come from props so we pass object as a props location
 const Chat = ({ location }) => {
-    const [name, setName] = useState('');
-    const [room, setRoom] = useState('');
+    const [name, setName] = useState(''); //for store user-name
+    const [room, setRoom] = useState(''); // for store room name
+
+    const [message , setMessage]= useState(''); //for store one message
+    const [messages , setMessages] = useState([]); //for storing set of messages in array
+
     const ENDPOINT = 'localhost:5000'; //url of server
 
+
+    //this use effect of join user to the server
     useEffect(() => {
         const { name, room } = queryString.parse(location.search); //this will get data from url
 
@@ -33,9 +39,44 @@ const Chat = ({ location }) => {
     }, [ENDPOINT, location.search]);
 
 
+
+    //second use effect for handling messages
+    useEffect(()=>{
+        socket.on('message',(message)=>{
+            setMessages([...messages , message]); //spedring because when new message arrive they add in array
+        })
+
+    },[messages]);
+
+
+
+
+    //function for sending message 
+    const sendMessage = (event) =>{
+        
+        event.preventDefault(); //because of when we press key not all page reload only that event is reload
+
+        //if message occure than it will execute and after callback happen and clear the message
+        if(message){
+            socket.emit('sendMessage' , message , ()=>{
+                setMessage('');
+            })
+        };
+
+        console.log(message , messages);
+
+    }
+
+
     return (
-        <div>
-            <p>Chat</p>
+        <div className="outerContainer">
+            <div className="container">
+                <input 
+                    value={message} 
+                    onChange={(event)=>setMessage(event.target.value)}
+                    onKeyPress={(event) => event.key === 'Enter' ? sendMessage(event) : null} />
+
+            </div>
         </div>
     )
 }
