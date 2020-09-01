@@ -17,7 +17,7 @@ const Chat = ({ location }) => {
     const [message , setMessage]= useState(''); //for store one message
     const [messages , setMessages] = useState([]); //for storing set of messages in array
 
-    const ENDPOINT = 'localhost:5000'; //url of server
+    const ENDPOINT = 'https://parthmessenger.herokuapp.com/'; //url of server
 
 
     //this use effect of join user to the server
